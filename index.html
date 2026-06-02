@@ -1,19 +1,610 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cyborg-X</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBORG INTERFACE • ADVANCED SOLUTION v5.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --bg-dark: #010204;
+            --cyborg-neon: #00f0ff;
+            --cyborg-pink: #ff0055;
+            --matrix-green: #39ff14;
+            --glass-bg: rgba(4, 8, 16, 0.85);
+            --glass-border: rgba(0, 240, 255, 0.22);
+            --text-light: #f8fafc;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 6%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(1, 2, 4, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px var(--cyborg-neon);
+        }
+
+        .logo span {
+            color: var(--cyborg-pink);
+            text-shadow: 0 0 10px var(--cyborg-pink);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 35px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #94a3b8;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--cyborg-neon);
+            text-shadow: 0 0 10px var(--cyborg-neon);
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 140px 20px 60px 20px;
+        }
+
+        .glitch-title {
+            font-size: 4.5rem;
+            font-weight: 1000;
+            letter-spacing: 10px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #fff, #00f0ff, #ff0055, #fff);
+            background-size: 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow-shift 8s linear infinite;
+        }
+
+        @keyframes glow-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            max-width: 750px;
+            line-height: 1.6;
+        }
+
+        /* LIVE ACTIVITY TICKER SYSTEM */
+        .live-ticker {
+            width: 100%;
+            max-width: 750px;
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255, 0, 85, 0.05);
+            border: 1px dashed var(--cyborg-pink);
+            padding: 8px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--cyborg-pink);
+        }
+
+        .ticker-pulse {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--matrix-green);
+            border-radius: 50%;
+            margin-right: 5px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* THE ADVANCED TERMINAL SHELL */
+        .terminal-shell {
+            width: 100%;
+            max-width: 750px;
+            background: rgba(2, 4, 8, 0.98);
+            border: 2px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: left;
+            box-shadow: 0 25px 60px rgba(0, 240, 255, 0.1);
+            position: relative;
+        }
+
+        .terminal-shell::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 3px, 6px 100%;
+            pointer-events: none;
+            border-radius: 12px;
+        }
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding-bottom: 12px;
+        }
+
+        .terminal-dots { display: flex; gap: 8px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot-1 { background: #ff5f56; }
+        .dot-2 { background: #ffbd2e; }
+        .dot-3 { background: #27c93f; }
+        .terminal-title { font-size: 0.8rem; color: #64748b; font-family: monospace; }
+
+        .terminal-output-box {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            color: var(--matrix-green);
+            height: 200px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .input-line {
+            display: flex;
+            align-items: center;
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--cyborg-neon);
+            font-size: 1rem;
+        }
+
+        .shell-prompt { margin-right: 12px; font-weight: bold; text-shadow: 0 0 5px var(--cyborg-neon); }
+        
+        .shell-input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: inherit;
+            font-size: inherit;
+            width: 100%;
+            outline: none;
+            caret-color: var(--cyborg-pink);
+        }
+
+        /* CORE GRID AND CARDS */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 70px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 40px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--cyborg-neon);
+            transition: all 0.3s;
+        }
+
+        .card:hover::before {
+            background: var(--cyborg-pink);
+            height: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-12px);
+            border-color: var(--cyborg-pink);
+            box-shadow: 0 25px 50px rgba(255, 0, 85, 0.15);
+        }
+
+        .card-meta {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--cyborg-pink);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 18px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .card p {
+            color: #94a3b8;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        /* REGISTRATION FORM PORTAL */
+        .portal-wrapper {
+            background: rgba(2, 4, 8, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 700px;
+            margin: 0 auto;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            color: var(--cyborg-neon);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(1, 2, 4, 0.8);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--cyborg-pink);
+            box-shadow: 0 0 20px rgba(255, 0, 85, 0.3);
+        }
+
+        .action-submit {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(45deg, var(--cyborg-pink), #b3003b);
+            color: #fff;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(255, 0, 85, 0.4);
+        }
+
+        .action-submit:hover {
+            box-shadow: 0 0 40px var(--cyborg-pink);
+            transform: scale(1.02);
+        }
+
+        footer {
+            text-align: center;
+            padding: 60px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.85rem;
+            color: #475569;
+            letter-spacing: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .glitch-title { font-size: 2.8rem; letter-spacing: 4px; }
+            .tagline { font-size: 0.95rem; }
+            .nav-links { display: none; }
+            .grid { grid-template-columns: 1fr; }
+            .portal-wrapper { padding: 30px; }
+        }
+    </style>
 </head>
 <body>
-<header><h1>CYBORG-X</h1></header>
-<section class="hero">
-<h2>THE FUTURE IS CYBERNETIC</h2>
-<p>Next-generation AI powered human-machine evolution.</p>
-<button>Explore</button>
-</section>
-<script src="script.js"></script>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <nav>
+        <div class="logo">MATRIX<span>5.0</span></div>
+        <ul class="nav-links">
+            <li><a href="#home" class="active">Terminal</a></li>
+            <li><a href="#solutions">Modules</a></li>
+            <li><a href="#uplink">Uplink</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero" id="home">
+        <h1 class="glitch-title">Cyborg_Core.v5</h1>
+        <div class="tagline">Build and develop real web solutions. If coding and problem-solving is your thing, inject terminal diagnostics below.</div>
+        
+        <!-- NEW LIVE SYNC TICKER -->
+        <div class="live-ticker">
+            <div><span class="ticker-pulse"></span> SYSTEM STATS: ACTIVE</div>
+            <div id="ticker-data">PACKETS: 1024 / SEC // SYNC_PULSE: OK</div>
+        </div>
+
+        <div class="terminal-shell">
+            <div class="terminal-header">
+                <div class="terminal-dots">
+                    <div class="dot dot-1"></div>
+                    <div class="dot dot-2"></div>
+                    <div class="dot dot-3"></div>
+                </div>
+                <div class="terminal-title">core_subsystem_shell.sh</div>
+            </div>
+            <div class="terminal-output-box" id="shell-output">
+                Initializing Matrix System Layer... Done.<br>
+                Type <span style="color:var(--cyborg-neon)">/help</span> to query system solutions database.<br><br>
+            </div>
+            <div class="input-line">
+                <span class="shell-prompt">root@matrix_core:~#</span>
+                <input type="text" class="shell-input" id="command-field" autocomplete="off" placeholder="Awaiting code sequence input...">
+            </div>
+        </div>
+    </section>
+
+    <section class="container" id="solutions">
+        <div class="section-header">
+            <h2 class="section-title">System Parameters</h2>
+        </div>
+        <div class="grid">
+            <div class="card">
+                <div class="card-meta">Execute // 01</div>
+                <h3>30-Hour Coding Marathon</h3>
+                <p>Plug into the development interface[span_0](start_span)[span_0](end_span). Build and compile scalable web architectures, Web3 structures, and generative AI configurations continuously over a 30-hour run window[span_1](start_span)[span_1](end_span).</p>
+            </div>
+            <div class="card">
+                <div class="card-meta">Execute // 02</div>
+                <h3>RoboWars Arena</h3>
+                <p>Heavy mechanical combat platforms clashing live in a reinforced environmental tracking arena[span_2](start_span)[span_2](end_span). Running telemetry scripts with sub-millisecond status processing updates[span_3](start_span)[span_3](end_span).</p>
+            </div>
+            <div class="card">
+                <div class="card-meta">Execute // 03</div>
+                <h3>Smart Pass RPG Network</h3>
+                <p>Dynamic user authorization layer[span_4](start_span)[span_4](end_span). Map individual hardware keys upon entry to automatically distribute ecosystem variables and token rewards around the campus grid[span_5](start_span)[span_5](end_span).</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="container" id="uplink">
+        <div class="section-header">
+            <h2 class="section-title">Initialize Node Uplink</h2>
+        </div>
+        <div class="portal-wrapper">
+            <form onsubmit="event.preventDefault(); triggerAdvancedClearance();">
+                <div class="form-group">
+                    <label>Developer Signature ID</label>
+                    <input type="text" id="dev-name" placeholder="e.g., Makada Gamer" required>
+                </div>
+                <div class="form-group">
+                    <label>Gateway Matrix Access Protocol (Email)</label>
+                    <input type="email" id="dev-email" placeholder="dev_node@network.com" required>
+                </div>
+                <button type="submit" class="action-submit">Authorize Matrix Node</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        CYBORG SUBSYSTEM SYSTEM INTERFACE // v5.0 PRODUCTION READY COMPILATION
+    </footer>
+
+    <script>
+        // NEW AUDIO NODE GENERATOR FOR REAL SOUND SYSTEM
+        function playBeep(freq = 600, duration = 0.08) {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.type = 'square';
+                oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gainNode.gain.setValueAtTime(0.04, audioCtx.currentTime);
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + duration);
+            } catch(e) { console.log("Audio contexts blocked or unsupported."); }
+        }
+
+        // AUTO FOCUS & AUTOMATIC LOWERCASE FIX CONSOLE ENGINE
+        const inputField = document.getElementById("command-field");
+        const outputBox = document.getElementById("shell-output");
+
+        // Keep focus on input automatically for easy demonstration
+        window.addEventListener('load', () => inputField.focus());
+        document.querySelector('.terminal-shell').addEventListener('click', () => inputField.focus());
+
+        inputField.addEventListener("keydown", function(e) {
+            if (e.key === "Enter") {
+                // FIXED BUG: Automatic clean string to prevent Case-Sensitive errors
+                const command = inputField.value.trim().toLowerCase();
+                playBeep(800, 0.05);
+                executeShellCommand(command);
+                inputField.value = "";
+            }
+        });
+
+        function executeShellCommand(cmd) {
+            let response = "";
+            outputBox.innerHTML += `<span>root@matrix_core:~# ${cmd}</span><br>`;
+            
+            // Auto format commands safely without symbols if users add slash
+            const cleanCmd = cmd.replace('/', '');
+
+            switch(cleanCmd) {
+                case 'help':
+                    response = "System Database Matrix Query Successful:<br>" +
+                               " <span style='color:var(--cyborg-pink)'>/status</span>  - Inspect current system runtime stability.<br>" +
+                               " <span style='color:var(--cyborg-pink)'>/matrix</span>  - Accelerate background data matrix speeds.<br>" +
+                               " <span style='color:var(--cyborg-pink)'>/clear</span>   - Reset and flash log output registers.";
+                    break;
+                case 'status':
+                    playBeep(450, 0.15);
+                    response = "System Status: <span style='color:var(--matrix-green)'>OPERATIONAL</span><br>Core Model: Cyborg_Core.v5<br>Ecosystem Latency: 11ms<br>State Cache: VERIFIED GREEN.";
+                    break;
+                case 'matrix':
+                    playBeep(1200, 0.2);
+                    response = "Injecting multi-thread code variables... Particle speeds set to MAXIMUM.";
+                    accelerateParticles();
+                    break;
+                case 'clear':
+                    outputBox.innerHTML = "";
+                    return;
+                case '':
+                    return;
+                default:
+                    response = `Shell Architecture Alert: Command syntax "${cmd}" unregistered. Type /help for directory mappings.`;
+            }
+            
+            outputBox.innerHTML += `<div>${response}</div><br>`;
+            outputBox.scrollTop = outputBox.scrollHeight;
+        }
+
+        // REAL-TIME SPEED PACKET TICKER SIMULATION
+        setInterval(() => {
+            const randomPackets = Math.floor(Math.random() * (1200 - 950) + 950);
+            const randomLatency = (Math.random() * 5 + 8).toFixed(1);
+            document.getElementById("ticker-data").innerText = `PACKETS: ${randomPackets} / SEC // SYS_LATENCY: ${randomLatency}ms`;
+        }, 1500);
+
+        // STYLISH ALERT REPLACEMENT FOR FORM POPUP
+        function triggerAdvancedClearance() {
+            playBeep(900, 0.3);
+            alert("🔒 SECURITY PROTOCOL PASSED:\nDeveloper authorization signature has been synchronized successfully with Matrix Core v5.0.");
+        }
+
+        // CANVAS BACKGROUND ACCELERATION PROTOCOLS
+        const canvas = document.getElementById("particle-canvas");
+        const ctx = canvas.getContext("2d");
+        let particles = [];
+        let globalSpeed = 0.5;
+
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+
+        class NodeParticle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.speedX = (Math.random() - 0.5) * globalSpeed;
+                this.speedY = (Math.random() - 0.5) * globalSpeed;
+                this.radius = Math.random() * 1.8 + 0.5;
+            }
+            process() {
+                this.x += this.speedX * globalSpeed;
+                this.y += this.speedY * globalSpeed;
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+            render() {
+                ctx.fillStyle = "rgba(0, 240, 255, 0.35)";
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < 75; i++) { particles.push(new NodeParticle()); }
+        }
+        function accelerateParticles() {
+            globalSpeed = 4.0;
+            setTimeout(() => { globalSpeed = 0.5; }, 4000);
+        }
+        initParticles();
+
+        function renderLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.process(); p.render(); });
+            requestAnimationFrame(renderLoop);
+        }
+        renderLoop();
+    </script>
 </body>
 </html>
